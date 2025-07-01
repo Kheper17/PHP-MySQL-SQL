@@ -1,0 +1,95 @@
+udemy-h2prog-101-requetes-001.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 3 Les bases de la requête de sélection
+		8. Les mots clf SELECT / FROM / AS
+----------------------------------------------------
+
+01.  Affichez tous les personnages
+	MariaDB [rpg]> SELECT * FROM personnage;
+	+--------------+--------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+--------------+-------------+-------+---------------+----------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 |
+	|            5 | larcher      | NULL        |     5 |             5 |        2 |
+	|            6 | lartificier  | lartificier |     7 |             8 |        2 |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 |
+	+--------------+--------------+-------------+-------+---------------+----------+
+02.  Afficher la liste des armes
+	MariaDB [rpg]> SELECT * FROM arme;
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      1 | HacheDuLyon           |        1 |    10 |          1 |
+	|      2 | HacheDeFeu            |        3 |    20 |          1 |
+	|      3 | HachedeGlace          |        7 |    35 |          1 |
+	|      4 | Arc en bois           |        1 |     5 |          2 |
+	|      5 | Arc en bois debene    |        5 |    15 |          2 |
+	|      6 | Arc des anges         |        9 |    30 |          2 |
+	|      7 | Excalibur             |       10 |    65 |          3 |
+	|      8 | Arbalete givrante     |        4 |    15 |          4 |
+	|      9 | Dague de voleur       |        2 |     7 |          6 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+03.  Afficher seulement le nom et le level minimum de toutes les armes
+	MariaDB [rpg]> SELECT nom, levelMin FROM arme;
+	+-----------------------+----------+
+	| nom                   | levelMin |
+	+-----------------------+----------+
+	| HacheDuLyon           |        1 |
+	| HacheDeFeu            |        3 |
+	| HachedeGlace          |        7 |
+	| Arc en bois           |        1 |
+	| Arc en bois debene    |        5 |
+	| Arc des anges         |        9 |
+	| Excalibur             |       10 |
+	| Arbalete givrante     |        4 |
+	| Dague de voleur       |        2 |
+	| Dage de contrebandier |        6 |
+	+-----------------------+----------+
+
+04.  Afficher le nom, le surnom et le level de tous les personnages
+	MariaDB [rpg]> SELECT nom, surnom, level FROM personnage;
+	+--------------+-------------+-------+
+	| nom          | surnom      | level |
+	+--------------+-------------+-------+
+	| wawaf        | BestWarrior |    10 |
+	| leWar        | ptitWar     |     8 |
+	| guerrierDu09 | baba        |    10 |
+	| headhunter   | HH          |    10 |
+	| larcher      | NULL        |     5 |
+	| lartificier  | lartificier |     7 |
+	| roguiBalbao  | elBoxor     |    10 |
+	+--------------+-------------+-------+
+
+05.  Afficher le nom et le niveau de tous les personnages en modifiant les titres des colonnes en pseudo et niveau
+	MariaDB [rpg]> SELECT nom AS pseudo, level AS niveau FROM personnage;
+	+--------------+--------+
+	| pseudo       | niveau |
+	+--------------+--------+
+	| wawaf        |     10 |
+	| leWar        |      8 |
+	| guerrierDu09 |     10 |
+	| headhunter   |     10 |
+	| larcher      |      5 |
+	| lartificier  |      7 |
+	| roguiBalbao  |     10 |
+	+--------------+--------+
+
+06.  Afficher le type des armes en renomant le type en "Types d'armes du jeu"
+	MariaDB [rpg]> SELECT libelle AS "Types d'armes du jeu" FROM typearme;
+	+----------------------+
+	| Types d'armes du jeu |
+	+----------------------+
+	| Hache                |
+	| Arc                  |
+	| Epee                 |
+	| Arbalete             |
+	| Masse                |
+	| Dague                |
+	+----------------------+

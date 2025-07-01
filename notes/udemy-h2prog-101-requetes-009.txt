@@ -1,0 +1,65 @@
+udemy-h2prog-101-requetes-002.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 3 Les bases de la requête de sélection
+		9. Les calculs, 
+			fonction COUNT compter
+					 SUM   somme
+					 AVG   moyenne
+					 MIN   la plus petite valeur
+					 MAX   la plus grande valeur
+----------------------------------------------------
+
+07.  Récupérer le nombre d'armes existantes
+	MariaDB [rpg]> SELECT count(*) AS "Nombre d'armes" FROM arme;
+	+----------------+
+	| Nombre d'armes |
+	+----------------+
+	|             10 |
+	+----------------+
+
+08.  Afficher le nombre de personnages du jeu (nom de la colonne)
+	MariaDB [rpg]> SELECT count(*) AS "Nombre de personnages" FROM personnage;
+	+-----------------------+
+	| Nombre de personnages |
+	+-----------------------+
+	|                     7 |
+	+-----------------------+
+
+09.  Récuperer la moyenne des niveaux des personnages du jeu
+	MariaDB [rpg]> SELECT AVG(level) AS "Moyenne de niveaux" FROM personnage;
+	+--------------------+
+	| Moyenne de niveaux |
+	+--------------------+
+	|             8.5714 |
+	+--------------------+
+
+10.  Récupérer la somme des points de force, d'agilité et d'intelligence de toutes les classes
+	SELECT SUM(baseForce) AS "Points de force du jeu", 
+	       SUM(baseAgi) AS "Points d'agilite du jeu", 
+	       SUM(baseIntel) AS "Points d'intel du jeu" 
+	FROM classe;
+	+------------------------+-------------------------+-----------------------+
+	| Points de force du jeu | Points d'agilite du jeu | Points d'intel du jeu |
+	+------------------------+-------------------------+-----------------------+
+	|                     13 |                      11 |                     9 |
+	+------------------------+-------------------------+-----------------------+
+
+11. Récupérer le "level" minimum et maximum des armes du jeu
+	 MariaDB [rpg]> SELECT MIN(levelMin), MAX(levelMin) FROM arme;
+	+---------------+---------------+
+	| MIN(levelMin) | MAX(levelMin) |
+	+---------------+---------------+
+	|             1 |            10 |
+	+---------------+---------------+
+
+12.  Additionner le nombre de points de caractéristique de toute les classes
+	MariaDB [rpg]> SELECT nom, baseForce + baseAgi + baseIntel AS "NB points de caracteristique" FROM classe;
+	+----------+------------------------------+
+	| nom      | NB points de caracteristique |
+	+----------+------------------------------+
+	| Guerrier |                           10 |
+	| Archer   |                           11 |
+	| Voleur   |                           12 |
+	+----------+------------------------------+
