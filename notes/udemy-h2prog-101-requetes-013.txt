@@ -1,0 +1,110 @@
+udemy-h2prog-101-requetes-013.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 4 Filter les données avec le clef WHERE
+		13. LIKE 		recherche en suivant un modèle
+			IN 			recherche dans un jeu de valeur
+			LIMIT		limite les résultats
+			OFFSET 		
+			IS NULL 	permet de vérifier si une donnée est nulle
+----------------------------------------------------
+
+28.  Récupérer les personnages qui ont un nom commençant par la lettre "l".
+	MariaDB [rpg]> SELECT * FROM personnage WHERE nom LIKE "l%";
+	+--------------+-------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom         | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+-------------+-------------+-------+---------------+----------+
+	|            2 | leWar       | ptitWar     |     8 |             3 |        1 |
+	|            5 | larcher     | NULL        |     5 |             5 |        2 |
+	|            6 | lartificier | lartificier |     7 |             8 |        2 |
+	+--------------+-------------+-------------+-------+---------------+----------+
+
+29.  Récupérer les personnages qui ont un nom commençant par la lettre "l" et se terminant par les lettres "er".
+	MariaDB [rpg]> SELECT * FROM personnage WHERE nom LIKE "l%er";
+	+--------------+-------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom         | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+-------------+-------------+-------+---------------+----------+
+	|            5 | larcher     | NULL        |     5 |             5 |        2 |
+	|            6 | lartificier | lartificier |     7 |             8 |        2 |
+	+--------------+-------------+-------------+-------+---------------+----------+
+
+30.  Récupérer les armes contenant le mot "bois".
+	MariaDB [rpg]> SELECT * FROM arme WHERE nom LIKE "%bois%";
+	+--------+--------------------+----------+-------+------------+
+	| idArme | nom                | levelMin | degat | idTypeArme |
+	+--------+--------------------+----------+-------+------------+
+	|      4 | Arc en bois        |        1 |     5 |          2 |
+	|      5 | Arc en bois debene |        5 |    15 |          2 |
+	+--------+--------------------+----------+-------+------------+
+
+31.  Récupérer les armes commençant par A et ayant en troisème lettre un B.
+	MariaDB [rpg]> SELECT * FROM arme WHERE nom LIKE "a_b%";
+	+--------+-------------------+----------+-------+------------+
+	| idArme | nom               | levelMin | degat | idTypeArme |
+	+--------+-------------------+----------+-------+------------+
+	|      8 | Arbalete givrante |        4 |    15 |          4 |
+	+--------+-------------------+----------+-------+------------+
+
+32.  Récupérer les armes ayant comme identifiant 1, 2, 4, 5 ou 7.
+	MariaDB [rpg]> SELECT * FROM arme WHERE idArme IN(1,2,4,5,7);
+	+--------+--------------------+----------+-------+------------+
+	| idArme | nom                | levelMin | degat | idTypeArme |
+	+--------+--------------------+----------+-------+------------+
+	|      1 | HacheDuLyon        |        1 |    10 |          1 |
+	|      2 | HacheDeFeu         |        3 |    20 |          1 |
+	|      4 | Arc en bois        |        1 |     5 |          2 |
+	|      5 | Arc en bois debene |        5 |    15 |          2 |
+	|      7 | Excalibur          |       10 |    65 |          3 |
+	+--------+--------------------+----------+-------+------------+
+
+33.  Récupérer les personnages ayant l'identifiant 2, 3, 4 ou 6 et qui sont "level" 10.
+	MariaDB [rpg]> SELECT * FROM personnage WHERE idPersonnage IN(2,3,4,6) AND level = 10;
+	+--------------+--------------+--------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom | level | idArmeUtilise | idClasse |
+	+--------------+--------------+--------+-------+---------------+----------+
+	|            3 | guerrierDu09 | baba   |    10 |             2 |        1 |
+	|            4 | headhunter   | HH     |    10 |             6 |        2 |
+	+--------------+--------------+--------+-------+---------------+----------+
+
+34a.  Récupérer les personnages ayant un surnom
+	MariaDB [rpg]> SELECT * FROM personnage WHERE surnom IS NOT NULL;
+	+--------------+--------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+--------------+-------------+-------+---------------+----------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 |
+	|            6 | lartificier  | lartificier |     7 |             8 |        2 |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 |
+	+--------------+--------------+-------------+-------+---------------+----------+
+
+34b.  Récupérer les personnages n'ayant aucun surnom
+	MariaDB [rpg]> SELECT * FROM personnage WHERE surnom IS NULL;
+	+--------------+---------+--------+-------+---------------+----------+
+	| idPersonnage | nom     | surnom | level | idArmeUtilise | idClasse |
+	+--------------+---------+--------+-------+---------------+----------+
+	|            5 | larcher | NULL   |     5 |             5 |        2 |
+	+--------------+---------+--------+-------+---------------+----------+
+
+
+35a.  Récupérer les 3 premières lignes de personnages
+	MariaDB [rpg]> SELECT * FROM personnage LIMIT 3;
+	+--------------+--------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+--------------+-------------+-------+---------------+----------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	+--------------+--------------+-------------+-------+---------------+----------+
+
+35b.  Récupérer les lignes 4 et 5 de la table "personnage"
+	MariaDB [rpg]> SELECT * FROM personnage LIMIT 2 OFFSET 3;
+	+--------------+------------+--------+-------+---------------+----------+
+	| idPersonnage | nom        | surnom | level | idArmeUtilise | idClasse |
+	+--------------+------------+--------+-------+---------------+----------+
+	|            4 | headhunter | HH     |    10 |             6 |        2 |
+	|            5 | larcher    | NULL   |     5 |             5 |        2 |
+	+--------------+------------+--------+-------+---------------+----------+
+

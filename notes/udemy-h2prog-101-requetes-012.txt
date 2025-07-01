@@ -1,0 +1,89 @@
+udemy-h2prog-101-requetes-005.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 4 Filter les données avec le clef WHERE
+		12. Les opérateur 
+			AND 		et
+			OR 			ou
+			BETWEEN		entre
+----------------------------------------------------
+
+
+21.  Récupérer toutes les armes ayant un "level" minimum compris entre 4 et 8 (inclus).
+	MariaDB [rpg]> SELECT * FROM arme WHERE levelMin >= 4 AND levelMin <= 8;
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      3 | HachedeGlace          |        7 |    35 |          1 |
+	|      5 | Arc en bois debene    |        5 |    15 |          2 |
+	|      8 | Arbalete givrante     |        4 |    15 |          4 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+22.  Récupérer toutes les armes ayant un "level" minimum inférieur à 4 ou supérieur à 8
+	MariaDB [rpg]> SELECT * FROM arme WHERE levelMin <= 3 OR levelMin >= 7;
+	+--------+-----------------+----------+-------+------------+
+	| idArme | nom             | levelMin | degat | idTypeArme |
+	+--------+-----------------+----------+-------+------------+
+	|      1 | HacheDuLyon     |        1 |    10 |          1 |
+	|      2 | HacheDeFeu      |        3 |    20 |          1 |
+	|      3 | HachedeGlace    |        7 |    35 |          1 |
+	|      4 | Arc en bois     |        1 |     5 |          2 |
+	|      6 | Arc des anges   |        9 |    30 |          2 |
+	|      7 | Excalibur       |       10 |    65 |          3 |
+	|      9 | Dague de voleur |        2 |     7 |          6 |
+	+--------+-----------------+----------+-------+------------+
+
+23.  Récupérer les armes 1, 2 et toutes les armes ayant un nombre de dégâts supérieur à 30.
+	MariaDB [rpg]> SELECT * FROM arme WHERE idArme=1 OR idArme=2 OR degat >= 30;
+	+--------+---------------+----------+-------+------------+
+	| idArme | nom           | levelMin | degat | idTypeArme |
+	+--------+---------------+----------+-------+------------+
+	|      1 | HacheDuLyon   |        1 |    10 |          1 |
+	|      2 | HacheDeFeu    |        3 |    20 |          1 |
+	|      3 | HachedeGlace  |        7 |    35 |          1 |
+	|      6 | Arc des anges |        9 |    30 |          2 |
+	|      7 | Excalibur     |       10 |    65 |          3 |
+	+--------+---------------+----------+-------+------------+
+
+24.  Récupérer l'ame 1 et l'arme 2, et les armesayant un nombre de dégâts compris entre 25 et 40.
+	SELECT * FROM arme WHERE idArme =1 OR idArme =2 OR (degat >=25 AND degat <= 40);
+	SELECT * FROM arme WHERE idArme =1 OR idArme =2 OR (degat BETWEEN 25 AND 40);
+	+--------+---------------+----------+-------+------------+
+	| idArme | nom           | levelMin | degat | idTypeArme |
+	+--------+---------------+----------+-------+------------+
+	|      1 | HacheDuLyon   |        1 |    10 |          1 |
+	|      2 | HacheDeFeu    |        3 |    20 |          1 |
+	|      3 | HachedeGlace  |        7 |    35 |          1 |
+	|      6 | Arc des anges |        9 |    30 |          2 |
+	+--------+---------------+----------+-------+------------+
+
+25.  Récupérer les personnages ayant un "level" différent de 8 et un "level" supérieur à 7 ou ayant un "level" inférieur à 6
+	MariaDB [rpg]> SELECT * FROM personnage WHERE level != 8 AND (level > 7 OR level < 6);
+	+--------------+--------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+--------------+-------------+-------+---------------+----------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 |
+	|            5 | larcher      | NULL        |     5 |             5 |        2 |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 |
+	+--------------+--------------+-------------+-------+---------------+----------+
+
+26.  Récup^érer le nombre de personnage qui n'ont pas atteint le niveau 10.
+	SELECT * FROM personnage
+	MariaDB [rpg]> SELECT COUNT(*) AS "NB perso <10" FROM personnage WHERE level != 10;
+	+--------------+
+	| NB perso <10 |
+	+--------------+
+	|            3 |
+	+--------------+
+
+27.  Récupérer la moyenne des dégâts des armes ayant un "level" compris entre 3 et 7.
+	MariaDB [rpg]> SELECT AVG(degat) AS "Moyenne degats" FROM arme WHERE levelMin BETWEEN 3 and 7;
+	+----------------+
+	| Moyenne degats |
+	+----------------+
+	|        19.8000 |
+	+----------------+

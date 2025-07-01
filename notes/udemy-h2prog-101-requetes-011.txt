@@ -1,0 +1,56 @@
+udemy-h2prog-101-requetes-004.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 4 Filter les données avec le clef WHERE
+		11. Le mot clef WHERE
+----------------------------------------------------
+
+17.  Récupérer toutes les armes dont le "level" minimum est de 5.
+	MariaDB [rpg]> SELECT * FROM arme WHERE levelMin > 5;
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      3 | HachedeGlace          |        7 |    35 |          1 |
+	|      6 | Arc des anges         |        9 |    30 |          2 |
+	|      7 | Excalibur             |       10 |    65 |          3 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+18.  Récupérer toutes les armes ayant un nombre de dégâts inférieur à 25
+	MariaDB [rpg]> SELECT * FROM arme WHERE degat < 25;
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      1 | HacheDuLyon           |        1 |    10 |          1 |
+	|      2 | HacheDeFeu            |        3 |    20 |          1 |
+	|      4 | Arc en bois           |        1 |     5 |          2 |
+	|      5 | Arc en bois debene    |        5 |    15 |          2 |
+	|      8 | Arbalete givrante     |        4 |    15 |          4 |
+	|      9 | Dague de voleur       |        2 |     7 |          6 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+19.  Récupérer tous les personnages ayant le "level" 10 et n'afficher que leur nom et leur surnom
+	MariaDB [rpg]> SELECT nom,surnom FROM personnage WHERE level = 10;
+	+--------------+-------------+
+	| nom          | surnom      |
+	+--------------+-------------+
+	| wawaf        | BestWarrior |
+	| guerrierDu09 | baba        |
+	| headhunter   | HH          |
+	| roguiBalbao  | elBoxor     |
+	+--------------+-------------+
+
+20.  Récupérer toutes les armes à distance
+	 SELECT * FROM typearme WHERE estDistance = 1;
+	 SELECT * FROM typearme WHERE estDistance = true;
+	+------------+----------+-------------+
+	| idTypeArme | libelle  | estDistance |
+	+------------+----------+-------------+
+	|          2 | Arc      |           1 |
+	|          4 | Arbalete |           1 |
+	+------------+----------+-------------+
+
+
+
