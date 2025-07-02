@@ -1,0 +1,74 @@
+udemy-h2prog-101-requetes-016.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 6 Filter les données avec le clef WHERE
+		16. Jointures et filtres
+----------------------------------------------------
+
+41.  Récupérer toutes les armes de tous les personnages
+
+	SELECT p.nom AS "Nom personnage", level, a.nom AS "Arme", a.levelMin 
+	FROM personnage p 
+	INNER JOIN dispose d ON p.idPersonnage = d.idPersonnage 
+	INNER JOIN arme a ON a.idArme = d.idArme;
+
+	+----------------+-------+-----------------------+----------+
+	| Nom personnage | level | Arme                  | levelMin |
+	+----------------+-------+-----------------------+----------+
+	| wawaf          |    10 | HacheDuLyon           |        1 |
+	| wawaf          |    10 | HacheDeFeu            |        3 |
+	| wawaf          |    10 | HachedeGlace          |        7 |
+	| wawaf          |    10 | Arc en bois           |        1 |
+	| wawaf          |    10 | Dague de voleur       |        2 |
+	| leWar          |     8 | HacheDuLyon           |        1 |
+	| leWar          |     8 | HacheDeFeu            |        3 |
+	| leWar          |     8 | HachedeGlace          |        7 |
+	| guerrierDu09   |    10 | HacheDeFeu            |        3 |
+	| guerrierDu09   |    10 | HachedeGlace          |        7 |
+	| guerrierDu09   |    10 | Excalibur             |       10 |
+	| headhunter     |    10 | Arc en bois           |        1 |
+	| headhunter     |    10 | Arc en bois debene    |        5 |
+	| larcher        |     5 | Excalibur             |       10 |
+	| lartificier    |     7 | Arc en bois           |        1 |
+	| lartificier    |     7 | Arbalete givrante     |        4 |
+	| roguiBalbao    |    10 | Dague de voleur       |        2 |
+	| roguiBalbao    |    10 | Dage de contrebandier |        6 |
+	+----------------+-------+-----------------------+----------+
+
+42.  Récupérer toutes les armes qui ne sont pas à distance.
+
+	SELECT a.nom, a.levelMin, a.degat, t.libelle AS "Type" 
+	FROM arme a 
+	INNER JOIN typearme t ON a.idTypeArme = t.idTypeArme 
+	WHERE t.estDistance = false;
+
+	+-----------------------+----------+-------+-------+
+	| nom                   | levelMin | degat | Type  |
+	+-----------------------+----------+-------+-------+
+	| HacheDuLyon           |        1 |    10 | Hache |
+	| HacheDeFeu            |        3 |    20 | Hache |
+	| HachedeGlace          |        7 |    35 | Hache |
+	| Excalibur             |       10 |    65 | Epee  |
+	| Dague de voleur       |        2 |     7 | Dague |
+	| Dage de contrebandier |        6 |    14 | Dague |
+	+-----------------------+----------+-------+-------+
+
+43.  Récupérer l'arme utilisée pâr chaque guerrier.
+
+	SELECT p.nom AS "Personnage", a.nom AS "Arme utilise", t.libelle AS "Type d'arme" 
+	FROM personnage p 
+	INNER JOIN classe c ON p.idClasse = c.idClasse 
+	INNER JOIN arme a ON a.idArme = p.idArmeUtilise 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	WHERE c.nom = "Guerrier";
+
+	+--------------+--------------+-------------+
+	| Personnage   | Arme utilise | Type d'arme |
+	+--------------+--------------+-------------+
+	| wawaf        | Excalibur    | Epee        |
+	| leWar        | HachedeGlace | Hache       |
+	| guerrierDu09 | HacheDeFeu   | Hache       |
+	+--------------+--------------+-------------+
+
+

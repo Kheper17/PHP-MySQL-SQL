@@ -1,0 +1,103 @@
+udemy-h2prog-101-requetes-018.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 6 Filter les données avec le clef WHERE
+		18. Jointures externes
+----------------------------------------------------
+
+
+48.  Récupérer tous les types d'armes même ceux qui n'ont pas d'arme associée.
+
+	MariaDB [rpg]> SELECT t.libelle AS "Type", a.nom AS "Arme" FROM typearme t INNER JOIN arme a ON a.idTypeArme = t.idTypeArme;
+	+----------+-----------------------+
+	| Type     | Arme                  |
+	+----------+-----------------------+
+	| Hache    | HacheDuLyon           |
+	| Hache    | HacheDeFeu            |
+	| Hache    | HachedeGlace          |
+	| Arc      | Arc en bois           |
+	| Arc      | Arc en bois debene    |
+	| Arc      | Arc des anges         |
+	| Epee     | Excalibur             |
+	| Arbalete | Arbalete givrante     |
+	| Dague    | Dague de voleur       |
+	| Dague    | Dage de contrebandier |
+	+----------+-----------------------+
+	--> il manque une arme, il faut donc changer les jointure /
+	Table A --- jointure J entre A et B --- Table B
+	- AJ : LEFT JOIN
+	- JB : RIGHT JOIN
+	- AB : FULL JOIN (n'existe pas dans MySQL)
+
+49. bis avec l'arme manquante
+
+	SELECT t.libelle AS "Type", a.nom AS "Arme" 
+	FROM typearme t 
+	LEFT JOIN arme a ON a.idTypeArme = t.idTypeArme;
+
+	+----------+-----------------------+
+	| Type     | Arme                  |
+	+----------+-----------------------+
+	| Hache    | HacheDuLyon           |
+	| Hache    | HacheDeFeu            |
+	| Hache    | HachedeGlace          |
+	| Arc      | Arc en bois           |
+	| Arc      | Arc en bois debene    |
+	| Arc      | Arc des anges         |
+	| Epee     | Excalibur             |
+	| Arbalete | Arbalete givrante     |
+   >| Masse    | NULL                  |
+	| Dague    | Dague de voleur       |
+	| Dague    | Dage de contrebandier |
+	+----------+-----------------------+
+
+50.  Récupérer toutes les armes et afficher le pêrsonnage qui les utilise, ordonéées paar le level minimum.
+
+	MariaDB [rpg]> SELECT * FROM arme a LEFT JOIN personnage p ON a.idArme = p.idArmeUtilise ORDER BY a.levelMin;
+	+--------+-----------------------+----------+-------+------------+--------------+--------------+-------------+-------+---------------+----------+
+	| idArme | nom                   | levelMin | degat | idTypeArme | idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------+-----------------------+----------+-------+------------+--------------+--------------+-------------+-------+---------------+----------+
+	|      1 | HacheDuLyon           |        1 |    10 |          1 |         NULL | NULL         | NULL        |  NULL |          NULL |     NULL |
+	|      4 | Arc en bois           |        1 |     5 |          2 |         NULL | NULL         | NULL        |  NULL |          NULL |     NULL |
+	|      9 | Dague de voleur       |        2 |     7 |          6 |         NULL | NULL         | NULL        |  NULL |          NULL |     NULL |
+	|      2 | HacheDeFeu            |        3 |    20 |          1 |            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	|      8 | Arbalete givrante     |        4 |    15 |          4 |            6 | lartificier  | lartificier |     7 |             8 |        2 |
+	|      5 | Arc en bois debene    |        5 |    15 |          2 |            5 | larcher      | NULL        |     5 |             5 |        2 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 |
+	|      3 | HachedeGlace          |        7 |    35 |          1 |            2 | leWar        | ptitWar     |     8 |             3 |        1 |
+	|      6 | Arc des anges         |        9 |    30 |          2 |            4 | headhunter   | HH          |    10 |             6 |        2 |
+	|      7 | Excalibur             |       10 |    65 |          3 |            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	+--------+-----------------------+----------+-------+------------+--------------+--------------+-------------+-------+---------------+----------+
+
+51.  Récupérer toutes les armes et voir les personnages qui les ont en  leur possession (table dispose), avec RIGHT JOIN (ordonne).
+
+	SELECT a.idArme, a.nom AS "Nom", p.nom AS "Personnage" 
+	FROM personnage p 
+	RIGHT JOIN dispose d ON d.idPersonnage = p.idPersonnage 
+	RIGHT JOIN arme a ON a.idArme = d.idArme 
+	ORDER BY a.idArme;
+
+	+--------+-----------------------+--------------+
+	| idArme | Nom                   | Personnage   |
+	+--------+-----------------------+--------------+
+	|      1 | HacheDuLyon           | wawaf        |
+	|      1 | HacheDuLyon           | leWar        |
+	|      2 | HacheDeFeu            | wawaf        |
+	|      2 | HacheDeFeu            | leWar        |
+	|      2 | HacheDeFeu            | guerrierDu09 |
+	|      3 | HachedeGlace          | wawaf        |
+	|      3 | HachedeGlace          | leWar        |
+	|      3 | HachedeGlace          | guerrierDu09 |
+	|      4 | Arc en bois           | wawaf        |
+	|      4 | Arc en bois           | headhunter   |
+	|      4 | Arc en bois           | lartificier  |
+	|      5 | Arc en bois debene    | headhunter   |
+	|      6 | Arc des anges         | NULL         |<--
+	|      7 | Excalibur             | guerrierDu09 |
+	|      7 | Excalibur             | larcher      |
+	|      8 | Arbalete givrante     | lartificier  |
+	|      9 | Dague de voleur       | wawaf        |
+	|      9 | Dague de voleur       | roguiBalbao  |
+	|     10 | Dage de contrebandier | roguiBalbao  |
+	+--------+-----------------------+--------------+

@@ -1,0 +1,71 @@
+udemy-h2prog-101-requetes-017.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 6 Filter les données avec le clef WHERE
+		17. Jointures, calculs et tris
+----------------------------------------------------
+
+44.  Récupérer toutes les armes dont disposent les joueurs ayant le level 10.
+
+	SELECT p.idPersonnage, p.nom AS "Perso", a.nom AS "Arme", t.libelle AS "Type"
+    FROM personnage p
+    INNER JOIN dispose d ON d.idPersonnage = p.idPersonnage
+    INNER JOIN arme a ON a.idArme = d.idArme
+    INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme
+    WHERE p.level = 10;
+
+	SELECT p.idPersonnage, p.nom AS "Perso", a.nom AS "Arme", t.libelle AS "Type"
+    FROM personnage p
+    INNER JOIN dispose d ON d.idPersonnage = p.idPersonnage
+    INNER JOIN arme a ON a.idArme = d.idArme
+    INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme
+    WHERE p.level = 10;
+    ORDER BY p.idPersonnage ASC
+
+	+--------------+--------------+-----------------------+-------+
+	| idPersonnage | Perso        | Arme                  | Type  |
+	+--------------+--------------+-----------------------+-------+
+	|            1 | wawaf        | HacheDuLyon           | Hache |
+	|            1 | wawaf        | HacheDeFeu            | Hache |
+	|            1 | wawaf        | HachedeGlace          | Hache |
+	|            1 | wawaf        | Arc en bois           | Arc   |
+	|            1 | wawaf        | Dague de voleur       | Dague |
+	|            3 | guerrierDu09 | HacheDeFeu            | Hache |
+	|            3 | guerrierDu09 | HachedeGlace          | Hache |
+	|            3 | guerrierDu09 | Excalibur             | Epee  |
+	|            4 | headhunter   | Arc en bois           | Arc   |
+	|            4 | headhunter   | Arc en bois debene    | Arc   |
+	|            7 | roguiBalbao  | Dague de voleur       | Dague |
+	|            7 | roguiBalbao  | Dage de contrebandier | Dague |
+	+--------------+--------------+-----------------------+-------+
+
+46.  Récupérer la moyenne des dégâts des armes à distance.
+
+	SELECT AVG(degat) AS "Moyenne de degat des armes a distance" 
+	FROM arme a 
+	INNER JOIN typearme t ON a.idTypeArme = t.idTypeArme 
+	WHERE t.estDistance = true;
+
+	+---------------------------------------+
+	| Moyenne de degat des armes a distance |
+	+---------------------------------------+
+	|                               16.2500 |
+	+---------------------------------------+
+
+47.  Récupérer tous les personnages disposant d'une arme d'un type commençant par "a".
+
+	SELECT DISTINCT p.nom 
+	FROM personnage p 
+	INNER JOIN dispose d ON p.idPersonnage = d.idPersonnage 
+	INNER JOIN arme a ON a.idArme = d.idArme 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	WHERE t.libelle LIKE "A%";
+	
+	+-------------+
+	| nom         |
+	+-------------+
+	| wawaf       |
+	| headhunter  |
+	| lartificier |
+	+-------------+
