@@ -1,0 +1,173 @@
+udemy-h2prog-101-requetes-019.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 7 Les groupements
+		19. Groupements et GROUP BY
+----------------------------------------------------
+
+52.  Afficher le nnombre d'arme par type d'arme.
+	
+	SELECT t.libelle AS "Type arme", COUNT(*) AS "Nb d'arme" 
+	FROM arme a 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	GROUP BY t.libelle;
+
+	+-----------+-----------+
+	| Type arme | Nb d'arme |
+	+-----------+-----------+
+	| Arbalete  |         1 |
+	| Arc       |         3 |
+	| Dague     |         2 |
+	| Epee      |         1 |
+	| Hache     |         3 |
+	+-----------+-----------+
+
+	Si non ne fait pas le GROUP BY t.libelle on obtient un calcul de toutes les types d'armes (10) qui garde la dernière arme (Hache).
+
+	SELECT t.libelle AS "Type arme", COUNT(*) AS "Nb d'arme" FROM arme a INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme;
+	+-----------+-----------+
+	| Type arme | Nb d'arme |
+	+-----------+-----------+
+	| Hache     |        10 |
+	+-----------+-----------+
+
+
+53.  Afficher le nombre de personnages par classe.
+
+	SELECT c.nom AS "Classe", c.description, COUNT(*) AS "NB personnage" 
+	FROM classe c 
+	INNER JOIN personnage p ON c.idClasse = p.idClasse 
+	GROUP BY c.nom, c.description;
+
+	+----------+------------------------------------------------------------------------------------------+---------------+
+	| Classe   | description                                                                              | NB personnage |
+	+----------+------------------------------------------------------------------------------------------+---------------+
+	| Archer   | Classe ├á distance maniant les ├®p├®es et les armes ├á distance                          |             3 |
+	| Guerrier | Classe de CaC, avec une bonne r├®sistance et maniant pratiquement tous les types d'armes |             3 |
+	| Voleur   | Classe furtive, ├®quilibr├®e mais ne maniant que les dagues                              |             1 |
+	+----------+------------------------------------------------------------------------------------------+---------------+
+
+54.  Afficher le nombre d'armes dont dispose chaque personnage.
+
+	SELECT p.nom, COUNT(*) AS "NB arme" 
+	FROM personnage p 
+	INNER JOIN dispose d ON d.idPersonnage = p.idPersonnage 
+	INNER JOIN arme a ON a.idArme = d.idArme 
+	GROUP BY p.nom;
+
+	+--------------+---------+
+	| nom          | NB arme |
+	+--------------+---------+
+	| guerrierDu09 |       3 |
+	| headhunter   |       2 |
+	| larcher      |       1 |
+	| lartificier  |       2 |
+	| leWar        |       3 |
+	| roguiBalbao  |       2 |
+	| wawaf        |       5 |
+	+--------------+---------+
+
+55.  Afficher le nombre d'armes dont dispose chaque personnage mais seulement les guerriers.
+
+	SELECT c.nom AS "Classe", p.nom, COUNT(*) AS "NB" 
+	FROM personnage p 
+	INNER JOIN dispose d ON d.idPersonnage = p.idPersonnage
+    INNER JOIN arme a ON a.idArme = d.idArme 
+    INNER JOIN classe c ON c.idClasse = p.idClasse 
+    WHERE c.nom = "Guerrier" 
+    GROUP BY p.nom;
+
+	+----------+--------------+----+
+	| Classe   | nom          | NB |
+	+----------+--------------+----+
+	| Guerrier | guerrierDu09 |  3 |
+	| Guerrier | leWar        |  3 |
+	| Guerrier | wawaf        |  5 |
+	+----------+--------------+----+
+
+56.  Afficher le nombre de personnages par arme.
+
+	SELECT a.nom, COUNT(*) AS "NB par arme" 
+	FROM arme a 
+	INNER JOIN dispose d ON d.idArme = a.idArme 
+	INNER JOIN personnage p ON p.idPersonnage = d.idPersonnage 
+	GROUP BY a.nom;
+
+	+-----------------------+-------------+
+	| nom                   | NB par arme |
+	+-----------------------+-------------+
+	| Arbalete givrante     |           1 |
+	| Arc en bois           |           3 |
+	| Arc en bois debene    |           1 |
+	| Dage de contrebandier |           1 |
+	| Dague de voleur       |           2 |
+	| Excalibur             |           2 |
+	| HacheDeFeu            |           3 |
+	| HachedeGlace          |           3 |
+	| HacheDuLyon           |           2 |
+	+-----------------------+-------------+
+
+	Le problèm c'est qu'on ne récupère par une arme. Il faut des jointures externes.
+
+	SELECT a.nom, COUNT(*) AS "NB par arme" 
+	FROM arme a 
+	LEFT JOIN dispose d ON d.idArme = a.idArme 
+	LEFT JOIN personnage p ON p.idPersonnage = d.idPersonnage 
+	GROUP BY a.nom;
+
+	+-----------------------+-------------+
+	| nom                   | NB par arme |
+	+-----------------------+-------------+
+	| Arbalete givrante     |           1 |
+	| Arc des anges         |           1 |<--
+	| Arc en bois           |           3 |
+	| Arc en bois debene    |           1 |
+	| Dage de contrebandier |           1 |
+	| Dague de voleur       |           2 |
+	| Excalibur             |           2 |
+	| HacheDeFeu            |           3 |
+	| HachedeGlace          |           3 |
+	| HacheDuLyon           |           2 |
+	+-----------------------+-------------+
+
+	Cependant il y a un 1 en face de l'arc des anges alors que personne ne l'a.
+	Ici on compte le nombre de ligne dans la base il faut compter le nombre de personne.
+
+	SELECT a.nom, COUNT(p.idPersonnage) AS "NB par arme" 
+	FROM arme a 
+	LEFT JOIN dispose d ON d.idArme = a.idArme 
+	LEFT JOIN personnage p ON p.idPersonnage = d.idPersonnage 
+	GROUP BY a.nom;
+
+	+-----------------------+-------------+
+	| nom                   | NB par arme |
+	+-----------------------+-------------+
+	| Arbalete givrante     |           1 |
+	| Arc des anges         |           0 |<--
+	| Arc en bois           |           3 |
+	| Arc en bois debene    |           1 |
+	| Dage de contrebandier |           1 |
+	| Dague de voleur       |           2 |
+	| Excalibur             |           2 |
+	| HacheDeFeu            |           3 |
+	| HachedeGlace          |           3 |
+	| HacheDuLyon           |           2 |
+	+-----------------------+-------------+
+
+
+57.  Afficher le niveau moyen de chaque classe.
+
+	SELECT c.nom AS "Classe", AVG(p.level) AS "Niveau Moyen" 
+	FROM classe c 
+	INNER JOIN personnage p ON c.idClasse = p.idClasse 
+	GROUP BY c.nom;
+
+	+----------+--------------+
+	| Classe   | Niveau Moyen |
+	+----------+--------------+
+	| Archer   |       7.3333 |
+	| Guerrier |       9.3333 |
+	| Voleur   |      10.0000 |
+	+----------+--------------+	
+	

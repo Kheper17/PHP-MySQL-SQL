@@ -1,0 +1,100 @@
+udemy-h2prog-101-requetes-020.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 7 Les groupements
+		20. Le mot clef HAVING
+----------------------------------------------------
+
+58. Afficher le niveau moyen de chaque classe et ne récupérer que les classes ayant un niveau minimum de 9.
+	On repart de la requête 57 à laquielle on ajoute un HAVING.
+	On ne peut pas ajouter un filtre avec le mot WHERE, on utilise donc HAVING.
+	HAVING ne fonctionne qu'avec les fonctions de calculs : AVG, COUNT, SUM, MIN, MAX.
+
+	SELECT c.nom AS "Classe", AVG(p.level) AS "Niveau Moyen" 
+	FROM classe c 
+	INNER JOIN personnage p ON c.idClasse = p.idClasse 
+	GROUP BY c.nom
+	HAVING AVG(p.level) > 9
+
+	+----------+--------------+
+	| Classe   | Niveau Moyen |
+	+----------+--------------+
+	| Guerrier |       9.3333 |
+	| Voleur   |      10.0000 |
+	+----------+--------------+
+
+59.  Afficher le nombre de personnages par arme et ne garder que les armes ayant entre 1 et 2 utilisateurs (dispose).
+
+	SELECT a.nom, COUNT(p.idPersonnage) AS "nb perso"
+    FROM arme a
+    INNER JOIN dispose d ON d.idArme = a.idArme
+    INNER JOIN personnage p ON p.idPersonnage = d.idPersonnage
+    GROUP BY a.nom;
+	+-----------------------+----------+
+	| nom                   | nb perso |
+	+-----------------------+----------+
+	| Arbalete givrante     |        1 |
+	| Arc en bois           |        3 |
+	| Arc en bois debene    |        1 |
+	| Dage de contrebandier |        1 |
+	| Dague de voleur       |        2 |
+	| Excalibur             |        2 |
+	| HacheDeFeu            |        3 |
+	| HachedeGlace          |        3 |
+	| HacheDuLyon           |        2 |
+	+-----------------------+----------+
+
+	On ne désire garder que les armes entre 1 et 2 utilisateurs.
+
+	SELECT a.nom, COUNT(p.idPersonnage) AS "nb perso" 
+	FROM arme a 
+	INNER JOIN dispose d ON d.idArme = a.idArme 
+	INNER JOIN personnage p ON p.idPersonnage = d.idPersonnage 
+	GROUP BY a.nom 
+	HAVING COUNT(p.idPersonnage) <= 2;
+
+	+-----------------------+----------+
+	| nom                   | nb perso |
+	+-----------------------+----------+
+	| Arbalete givrante     |        1 |
+	| Arc en bois debene    |        1 |
+	| Dage de contrebandier |        1 |
+	| Dague de voleur       |        2 |
+	| Excalibur             |        2 |
+	| HacheDuLyon           |        2 |
+	+-----------------------+----------+
+
+60.  Afficher le nombre d'arme par type d'arme mais ne prendre que les armes de corps à corps présentes au maximum 1 fois.
+
+	SELECT t.libelle AS "Type", COUNT(a.idArme) AS "NB arme" 
+	FROM typearme t 
+	LEFT JOIN arme a ON t.idTypeArme = a.idTypeArme 
+	WHERE t.estDistance = false 
+	GROUP BY t.libelle;
+
+	+-------+---------+
+	| Type  | NB arme |
+	+-------+---------+
+	| Dague |       2 |
+	| Epee  |       1 |
+	| Hache |       3 |
+	| Masse |       0 |
+	+-------+---------+
+
+	Ici on a tous les calculs et on ne souhaite que ceux qui ont été utilisé qu'une seule fois.
+
+	SELECT t.libelle AS "Type", COUNT(a.idArme) AS "NB arme" 
+	FROM typearme t 
+	LEFT JOIN arme a ON t.idTypeArme = a.idTypeArme WHERE t.estDistance = false 
+	GROUP BY t.libelle 
+	HAVING COUNT(a.idArme) <= 1;
+
+	+-------+---------+
+	| Type  | NB arme |
+	+-------+---------+
+	| Epee  |       1 |
+	| Masse |       0 |
+	+-------+---------+
+
+	Et si on remplace le LEFT JOIN par un INNER JOIN on aura que les épées.
