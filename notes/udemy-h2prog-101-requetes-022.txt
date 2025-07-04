@@ -1,0 +1,184 @@
+udemy-h2prog-101-requetes-022.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 8 Les requêtes imbriquées
+		22. Les requêtes imbriquées plus complexes
+----------------------------------------------------
+
+64.  Pour les armes à distances, récupérer le nombre maximum d'occurence du type arme.
+
+	Nombre d'occurence pour les armes à distance :
+	
+	SELECT t.libelle, COUNT(*) AS "valeur" 
+	FROM arme a 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	WHERE t.estDistance = true 
+	GROUP BY t.libelle;
+
+	+----------+--------+
+	| libelle  | valeur |
+	+----------+--------+
+	| Arbalete |      1 |
+	| Arc      |      3 |
+	+----------+--------+
+
+	On récupère l'occurence la plus forte ! 
+
+	SELECT MAX(valeur) FROM (
+		SELECT t.libelle, COUNT(*) AS "valeur" 
+		FROM arme a 
+		INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+		WHERE t.estDistance = true 
+		GROUP BY t.libelle
+	) dynatable;
+
+	En fait la sous requête crée un table dynamique (à la volée) pour laquelle il faut un nom : dynatable.
+	+-------------+
+	| MAX(valeur) |
+	+-------------+
+	|           3 |
+	+-------------+
+
+
+65.  Récupérer les types d'armes ayant le nombre égal d'occurence de la précédente requête. 
+
+	SELECT t.libelle AS "Type Arme", COUNT(*) AS "Nombre Arme" 
+	FROM typearme t 
+	INNER JOIN arme a ON t.idTypeArme = a.idTypeArme 
+	GROUP BY t.libelle 
+	HAVING COUNT(*)=( 
+		SELECT MAX(valeur) AS "NB arme a distance" FROM ( 
+			SELECT COUNT(*)AS "valeur" 
+			FROM arme a 
+			INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+			WHERE t.estDistance = true 
+			GROUP BY t.libelle 
+		) dynatable 
+	);
+
+	+-----------+-------------+
+	| Type Arme | Nombre Arme |
+	+-----------+-------------+
+	| Arc       |           3 |
+	| Hache     |           3 |
+	+-----------+-------------+
+
+	Partie 1 de la requête
+--------------------------
+	SELECT t.libelle AS "Type Arme", COUNT(*) AS "Nombre Arme" 
+	FROM typearme t 
+	INNER JOIN arme a ON t.idTypeArme = a.idTypeArme 
+	GROUP BY t.libelle 
+
+	+-----------+-------------+
+	| Type Arme | Nombre Arme |
+	+-----------+-------------+
+	| Arbalete  |           1 |
+	| Arc       |           3 |
+	| Dague     |           2 |
+	| Epee      |           1 |
+	| Hache     |           3 |
+	+-----------+-------------+
+	Chacun des types d'armes et leur nombre d'occurence.
+
+	Partie 2 de la requête
+--------------------------
+	Récupérer celle qui sont supérieure à 3 à partir de la sous requête
+
+	SELECT t.libelle AS "Type Arme", COUNT(*) AS "Nombre Arme" 
+	FROM typearme t 
+	INNER JOIN arme a ON t.idTypeArme = a.idTypeArme 
+	GROUP BY t.libelle
+    HAVING COUNT(*) >= 3;
+
+    On veut ajouter le 3 mais pas en dur, via la sous requête.
+
+
+66.  Récupérer les armes ayant un nombre de dégâts supérieur au nombre de dégâts des arcs.
+
+	SELECT * 
+	FROM arme a 
+	WHERE a.degat > ALL (
+		SELECT a.degat FROM arme a 
+		INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+		WHERE t.libelle = "Arc"
+	);
+	+--------+--------------+----------+-------+------------+
+	| idArme | nom          | levelMin | degat | idTypeArme |
+	+--------+--------------+----------+-------+------------+
+	|      3 | HachedeGlace |        7 |    35 |          1 |
+	|      7 | Excalibur    |       10 |    65 |          3 |
+	+--------+--------------+----------+-------+------------+
+
+	On récupère les dégats des arc en sous requête.
+	Et avec ALL on,n récupère les occurences supérieure à celle retournées par la sous requête.
+
+
+67.  Récupérer les armes à distance sans utiliser de jointure.
+
+	la sous requête : 
+	SELECT t.idTypeArme FROM typearme t WHERE t.estDistance = false;
+	+------------+
+	| idTypeArme |
+	+------------+
+	|          1 |
+	|          3 |
+	|          5 |
+	|          6 |
+	+------------+
+	Ce sont les éléments que l'on met dans le IN (mais la de façon dynamique).
+
+	La requête de façon non dynamique :
+	SELECT * FROM arme WHERE idTypeArme IN(1,3,5,6);
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      1 | HacheDuLyon           |        1 |    10 |          1 |
+	|      2 | HacheDeFeu            |        3 |    20 |          1 |
+	|      3 | HachedeGlace          |        7 |    35 |          1 |
+	|      7 | Excalibur             |       10 |    65 |          3 |
+	|      9 | Dague de voleur       |        2 |     7 |          6 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+	La requête et sous requête dynamique :
+
+ 	SELECT * 
+	FROM arme 
+	WHERE idTypeArme IN(
+		SELECT t.idTypeArme 
+		FROM typearme t 
+		WHERE t.estDistance = false
+	);
+
+	+--------+-----------------------+----------+-------+------------+
+	| idArme | nom                   | levelMin | degat | idTypeArme |
+	+--------+-----------------------+----------+-------+------------+
+	|      1 | HacheDuLyon           |        1 |    10 |          1 |
+	|      2 | HacheDeFeu            |        3 |    20 |          1 |
+	|      3 | HachedeGlace          |        7 |    35 |          1 |
+	|      7 | Excalibur             |       10 |    65 |          3 |
+	|      9 | Dague de voleur       |        2 |     7 |          6 |
+	|     10 | Dage de contrebandier |        6 |    14 |          6 |
+	+--------+-----------------------+----------+-------+------------+
+
+	Un peu con, mais ça marche aussi.
+
+	La requête relationelle avec une jointure :
+
+	SELECT a.idTypeArme, a.nom, a.levelMin, a.degat, a.idTypeArme 
+	FROM arme a 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	WHERE t.estDistance = false;
+	+------------+-----------------------+----------+-------+------------+
+	| idTypeArme | nom                   | levelMin | degat | idTypeArme |
+	+------------+-----------------------+----------+-------+------------+
+	|          1 | HacheDuLyon           |        1 |    10 |          1 |
+	|          1 | HacheDeFeu            |        3 |    20 |          1 |
+	|          1 | HachedeGlace          |        7 |    35 |          1 |
+	|          3 | Excalibur             |       10 |    65 |          3 |
+	|          6 | Dague de voleur       |        2 |     7 |          6 |
+	|          6 | Dage de contrebandier |        6 |    14 |          6 |
+	+------------+-----------------------+----------+-------+------------+
+

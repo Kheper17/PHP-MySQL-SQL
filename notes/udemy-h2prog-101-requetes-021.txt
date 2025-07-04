@@ -1,0 +1,77 @@
+udemy-h2prog-101-requetes-021.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 8 Les requêtes imbriquées
+		21. Les requêtes imbriquées
+----------------------------------------------------
+
+61.  Récupérer les armes ayant un nombre de dégâts supérieurs à la moyenne du nombre de dégâts de toutes les armes.
+
+	SELECT a.nom, a.degat 
+	FROM arme a 
+	WHERE a.degat > (SELECT AVG(degat) FROM arme);
+
+	+---------------+-------+
+	| nom           | degat |
+	+---------------+-------+
+	| HachedeGlace  |    35 |
+	| Arc des anges |    30 |
+	| Excalibur     |    65 |
+	+---------------+-------+
+
+62.  Récupérer les personnages ayant un level inférieur à la moyenne.
+
+	Commençons par la sous requête : la moyenne des level de tous les personnages.
+	SELECT AVG(level) FROM personnage;
+	+------------+
+	| AVG(level) |
+	+------------+
+	|     8.5714 |
+	+------------+
+
+	SELECT * 
+	FROM personnage 
+	WHERE level < (SELECT AVG(level) FROM personnage);
+	+--------------+-------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom         | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+-------------+-------------+-------+---------------+----------+
+	|            2 | leWar       | ptitWar     |     8 |             3 |        1 |
+	|            5 | larcher     | NULL        |     5 |             5 |        2 |
+	|            6 | lartificier | lartificier |     7 |             8 |        2 |
+	+--------------+-------------+-------------+-------+---------------+----------+
+
+63.  Récupérer les persopnnages ayant un level supérieur à la moyenne des archers.
+
+	On commence par la sous requête : la la moyenne des archers.
+
+	SELECT AVG(level) 
+	FROM personnage p 
+	INNER JOIN classe c ON p.idClasse = c.idClasse 
+	WHERE c.nom = "Archer";
+
+	+------------+
+	| AVG(level) |
+	+------------+
+	|     7.3333 |
+	+------------+
+
+	A présent on récupère les gens dont le level est supérieur à celui des archers.
+
+	SELECT * 
+	FROM personnage p 
+	WHERE p.level > (
+		SELECT AVG(level) 
+		FROM personnage p 
+		INNER JOIN classe c ON p.idClasse = c.idClasse 
+		WHERE c.nom = "Archer");
+		
+	+--------------+--------------+-------------+-------+---------------+----------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse |
+	+--------------+--------------+-------------+-------+---------------+----------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 |
+	+--------------+--------------+-------------+-------+---------------+----------+
