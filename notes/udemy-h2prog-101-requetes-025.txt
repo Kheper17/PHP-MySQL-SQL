@@ -1,0 +1,126 @@
+udemy-h2prog-101-requetes-025.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 9 Les requêtes de gestion (CRUD)
+		24. Gestion des données
+----------------------------------------------------
+
+71.  Ajouter des lignes dans la table attaque puis dans la table utilise.
+
+	INSERT INTO attaque(nom, baseDegat) VALUES('attaque1', 5); 
+	INSERT INTO attaque(nom, baseDegat) VALUES('attaque2', 10); 
+	INSERT INTO attaque(nom, baseDegat) VALUES('attaque3', 15); 
+	INSERT INTO attaque(nom, baseDegat) VALUES('attaque4', 20); 
+
+	SELECT * FROM attaque;
+	+-----------+----------+-----------+
+	| idAttaque | nom      | baseDegat |
+	+-----------+----------+-----------+
+	|         1 | attaque1 |         5 |
+	|         2 | attaque2 |        10 |
+	|         3 | attaque3 |        15 |
+	|         4 | attaque4 |        20 |
+	+-----------+----------+-----------+
+
+	INSERT INTO utilise(idAttaque, idPersonnage, levelAttaque) VALUES(1,1,2),(2,1,2),(2,2,1),(4,3,2),(1,4,3),(4,5,3); 
+
+	SELECT * FROM utilise;
+	+-----------+--------------+--------------+
+	| idAttaque | idPersonnage | levelAttaque |
+	+-----------+--------------+--------------+
+	|         1 |            1 |            2 |
+	|         1 |            4 |            3 |
+	|         2 |            1 |            2 |
+	|         2 |            2 |            1 |
+	|         4 |            3 |            2 |
+	|         4 |            5 |            3 |
+	+-----------+--------------+--------------+
+
+
+72a.  Modifier l'attauqe de toutes les lignes pour que les dégâts soient égaux à 10.
+
+	UPDATE attaque SET baseDegat = 10;
+
+	 SELECT * FROM attaque;
+	+-----------+----------+-----------+
+	| idAttaque | nom      | baseDegat |
+	+-----------+----------+-----------+
+	|         1 | attaque1 |        10 |
+	|         2 | attaque2 |        10 |
+	|         3 | attaque3 |        10 |
+	|         4 | attaque4 |        10 |
+	+-----------+----------+-----------+
+
+72b.   Modifier les attaques avec les identifiants 2 et 3 pour qu'elle disposent de 50 dégâts.
+
+	 UPDATE attaque SET baseDegat = 50 WHERE idAttaque = 2 OR idAttaque = 3;
+
+	 SELECT * FROM attaque;
+	+-----------+----------+-----------+
+	| idAttaque | nom      | baseDegat |
+	+-----------+----------+-----------+
+	|         1 | attaque1 |        10 |
+	|         2 | attaque2 |        50 |<--
+	|         3 | attaque3 |        50 |<--
+	|         4 | attaque4 |        10 |
+	+-----------+----------+-----------+
+
+73.  Supprimer l'attaque qui a l'identifiant 4.
+
+	DELETE FROM attaque WHERE idAttaque = 4;
+
+	ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`rpg`.`utilise`, CONSTRAINT `FK_ATTAQUE_UTILISE` FOREIGN KEY (`idAttaque`) REFERENCES `attaque` (`idAttaque`))
+
+	Même si la requête en bonne, on ne peut pas l'executer parce qu'il y a des attaque avec l'identifiant 4.
+
+
+74.  Supprimer la table dispose, la recréer avec la propriété ON DELETE CASCADE et remplacer toutes les lignes dedans.
+	 Puis supprimer la ligne dans attaque.
+
+	 DROP TABLE utilise;
+	 CREATE TABLE utilise (
+	 	idAttaque INT NOT NULL,
+	 	idPersonnage INT NOT NULL,
+	 	levelAttaque INT,
+	 	PRIMARY KEY (idAttaque, idPersonnage),
+	 	CONSTRAINT FK_ATTAQUE_UTILISE FOREIGN KEY(idAttaque) REFERENCES attaque(idAttaque) ON DELETE CASCADE,
+	 	CONSTRAINT FK_PERSONNAGE_UTILISE FOREIGN KEY(idPersonnage) REFERENCES personnage(idPersonnage) ON DELETE CASCADE
+	 );
+	 INSERT INTO utilise(idAttaque, idPersonnage, levelAttaque)  VALUES(1,1,2),(2,1,2),(2,2,1),(4,3,2),(1,4,3),(4,5,3);
+	 DELETE FROM attaque WHERE idAttaque = 4;
+
+	  SELECT * FROM attaque;						SELECT * FROM utilise;
+	+-----------+----------+-----------+			+-----------+--------------+--------------+
+	| idAttaque | nom      | baseDegat |			| idAttaque | idPersonnage | levelAttaque |
+	+-----------+----------+-----------+			+-----------+--------------+--------------+
+	|         1 | attaque1 |        10 |			|         1 |            1 |            2 |
+	|         2 | attaque2 |        50 |			|         1 |            4 |            3 |
+	|         3 | attaque3 |        50 |			|         2 |            1 |            2 |
+	+-----------+----------+-----------+			|         2 |            2 |            1 |
+													+-----------+--------------+--------------+
+
+75.  Modifier la table personnage pour rajouter une date de naissance, définir ensuite une valeur pour chaque personnage.
+
+	ALTER TABLE personnage ADD deteNaissance DATE;
+
+	UPDATE personnage SET dateNaissance = "2000-01-01" WHERE idPersonnage=1;
+	UPDATE personnage SET dateNaissance = "2001-02-01" WHERE idPersonnage=2;
+	UPDATE personnage SET dateNaissance = "2002-03-01" WHERE idPersonnage=3;
+	UPDATE personnage SET dateNaissance = "2003-06-01" WHERE idPersonnage=4;
+	UPDATE personnage SET dateNaissance = "2001-04-01" WHERE idPersonnage=5;
+	UPDATE personnage SET dateNaissance = "2007-02-01" WHERE idPersonnage=6;
+	UPDATE personnage SET dateNaissance = "2003-05-01" WHERE idPersonnage=7;
+	
+	SELECT * FROM personnage;
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse | dateNaissance |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 | 2000-01-01    |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 | 2001-02-01    |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 | 2002-03-01    |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 | 2003-06-01    |
+	|            5 | larcher      | NULL        |     5 |             5 |        2 | 2001-04-01    |
+	|            6 | lartificier  | lartificier |     7 |             8 |        2 | 2007-02-01    |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 | 2003-05-01    |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
