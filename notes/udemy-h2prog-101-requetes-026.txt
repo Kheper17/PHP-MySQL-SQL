@@ -1,0 +1,91 @@
+udemy-h2prog-101-requetes-026.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 10 Les dates
+		26. Requête avec des dates
+----------------------------------------------------
+
+76.  Récupérer les personnages nés après 2002. 
+
+	SELECT * FROM personnage p WHERE p.dateNaissance > "2002-01-01";
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse | dateNaissance |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 | 2002-03-01    |
+	|            4 | headhunter   | HH          |    10 |             6 |        2 | 2003-06-01    |
+	|            6 | lartificier  | lartificier |     7 |             8 |        2 | 2007-02-01    |
+	|            7 | roguiBalbao  | elBoxor     |    10 |            10 |        3 | 2003-05-01    |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+
+77.  Récupérer l'année de naissance de tous les personnages.
+
+	SELECT nom, YEAR(dateNaissance) AS "Annee Naissance" FROM personnage;
+	+--------------+-----------------+
+	| nom          | Annee Naissance |
+	+--------------+-----------------+
+	| wawaf        |            2000 |
+	| leWar        |            2001 |
+	| guerrierDu09 |            2002 |
+	| headhunter   |            2003 |
+	| larcher      |            2001 |
+	| lartificier  |            2007 |
+	| roguiBalbao  |            2003 |
+	+--------------+-----------------+
+
+78. Récupérer l'âge de chaque personne.
+
+	 SELECT nom, DATEDIFF(NOW(),dateNaissance)/365 AS "AGE" FROM personnage;
+	+--------------+---------+
+	| nom          | AGE     |
+	+--------------+---------+
+	| wawaf        | 25.5260 |
+	| leWar        | 24.4384 |
+	| guerrierDu09 | 23.3616 |
+	| headhunter   | 22.1096 |
+	| larcher      | 24.2767 |
+	| lartificier  | 18.4356 |
+	| roguiBalbao  | 22.1945 |
+	+--------------+---------+
+
+	SELECT nom, CONVERT(DATEDIFF(NOW(),dateNaissance)/365,INT) AS "AGE" FROM personnage;
+	+--------------+------+
+	| nom          | AGE  |
+	+--------------+------+
+	| wawaf        |   26 |
+	| leWar        |   24 |
+	| guerrierDu09 |   23 |
+	| headhunter   |   22 |
+	| larcher      |   24 |
+	| lartificier  |   18 |
+	| roguiBalbao  |   22 |
+	+--------------+------+
+
+79. Calculer la moyenne d'âge des personnages.
+
+	SELECT AVG(date1.AGE) FROM (SELECT nom, CONVERT(DATEDIFF(NOW(),dateNaissance)/365,INT) AS "AGE" FROM personnage) date1;
+	+----------------+
+	| AVG(date1.AGE) |
+	+----------------+
+	|        22.7143 |
+	+----------------+
+
+80. Récupérer les personnages ayant plus de 15 ans.
+	
+	SELECT date1.nom, date1.AGE FROM(
+		SELECT nom, CONVERT(DATEDIFF(NOW(),dateNaissance)/365,INT) AS "AGE" FROM personnage
+	) date1 
+	WHERE date1.AGE > 15;
+
+	+--------------+------+
+	| nom          | AGE  |
+	+--------------+------+
+	| wawaf        |   26 |
+	| leWar        |   24 |
+	| guerrierDu09 |   23 |
+	| headhunter   |   22 |
+	| larcher      |   24 |
+	| lartificier  |   18 |
+	| roguiBalbao  |   22 |
+	+--------------+------+
+
