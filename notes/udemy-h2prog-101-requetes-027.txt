@@ -1,0 +1,71 @@
+udemy-h2prog-101-requetes-027.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		27. Requêtes 80 à 82
+----------------------------------------------------
+
+
+80. Récupérer les attaques de tous les personnages (ordonnées par personnage).
+
+	SELECT p.nom, p.surnom, p.level, a.nom, a.baseDegat 
+	FROM attaque a 
+	INNER JOIN utilise u ON a.idAttaque = u.idAttaque 
+	INNER JOIN personnage p ON p.idPersonnage = u.idPersonnage 
+	ORDER BY p.idPersonnage;
+
+	+------------+-------------+-------+----------+-----------+
+	| nom        | surnom      | level | nom      | baseDegat |
+	+------------+-------------+-------+----------+-----------+
+	| wawaf      | BestWarrior |    10 | attaque1 |        10 |
+	| wawaf      | BestWarrior |    10 | attaque2 |        50 |
+	| leWar      | ptitWar     |     8 | attaque2 |        50 |
+	| headhunter | HH          |    10 | attaque1 |        10 |
+	+------------+-------------+-------+----------+-----------+
+
+
+81. Pour chaque personnage utilisant l'attaque 1, afficher le "level" utilisé.
+
+	SELECT p.nom AS "Perso", u.levelAttaque 
+	FROM attaque a 
+	INNER JOIN utilise u ON u.idAttaque = a.idAttaque 
+	INNER JOIN personnage p ON p.idPersonnage = u.idPersonnage 
+	WHERE a.nom = "attaque1";
+
+	+------------+--------------+
+	| Perso      | levelAttaque |
+	+------------+--------------+
+	| wawaf      |            2 |
+	| headhunter |            3 |
+	+------------+--------------+
+
+82. Récupérer toutes les informations du personnage avecle nom "wawaf".
+
+	SELECT p.nom AS "Nom personnage", c.nom AS "Classe", a.nom AS "Arme utilisee", t.libelle AS "Type Arme utilisee", att.nom AS "Attaque", a2.nom AS "Arme dispose", t2.libelle AS "Type arme" 
+	FROM personnage p 
+	INNER JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+	INNER JOIN attaque att ON att.idAttaque = u.idAttaque 
+	INNER JOIN classe c ON c.idClasse = p.idClasse 
+	INNER JOIN arme a ON a.idArme = p.idArmeUtilise 
+	INNER JOIN dispose d ON d.idPersonnage = p.idPersonnage 
+	INNER JOIN arme a2 ON a2.idArme = d.idArme 
+	INNER JOIN typearme t ON t.idTypeArme = a.idTypeArme 
+	INNER JOIN typearme t2 ON t2.idTypeArme = a2.idTypeArme 
+	WHERE p.nom = "wawaf";
+
+	+----------------+----------+---------------+--------------------+----------+-----------------+-----------+
+	| Nom personnage | Classe   | Arme utilisee | Type Arme utilisee | Attaque  | Arme dispose    | Type arme |
+	+----------------+----------+---------------+--------------------+----------+-----------------+-----------+
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque1 | HacheDuLyon     | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque1 | HacheDeFeu      | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque1 | HachedeGlace    | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque1 | Arc en bois     | Arc       |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque1 | Dague de voleur | Dague     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque2 | HacheDuLyon     | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque2 | HacheDeFeu      | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque2 | HachedeGlace    | Hache     |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque2 | Arc en bois     | Arc       |
+	| wawaf          | Guerrier | Excalibur     | Epee               | attaque2 | Dague de voleur | Dague     |
+	+----------------+----------+---------------+--------------------+----------+-----------------+-----------+
+
