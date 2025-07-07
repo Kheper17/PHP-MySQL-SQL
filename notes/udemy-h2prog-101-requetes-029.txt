@@ -1,0 +1,82 @@
+udemy-h2prog-101-requetes-029.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		29. Requêtes 86 à 90
+----------------------------------------------------
+
+86. Récupérer le plus haut level d'utilisation de l'atttaque 1.
+
+	SELECT MAX(levelAttaque) FROM utilise u INNER JOIN attaque a ON a.idAttaque = u.idAttaque WHERE a.nom = "attaque1";
+	+-------------------+
+	| MAX(levelAttaque) |
+	+-------------------+
+	|                 3 |
+	+-------------------+
+
+87. Récupérer le personnage utilisant l'aataque 1 avec le level le plus haut (à partir de la requête précédente).
+
+
+	 SELECT p.nom AS "Perso" , levelAttaque 
+	 FROM attaque a 
+	 INNER JOIN utilise u ON u.idAttaque = a.idAttaque 
+	 INNER JOIN personnage p ON p.idPersonnage = u.idPersonnage 
+	 WHERE a.nom = "attaque1" 
+	 HAVING u.levelAttaque >= ALL (
+	 	SELECT MAX(levelAttaque) 
+	 	FROM utilise u 
+	 	INNER JOIN attaque a ON a.idAttaque = u.idAttaque 
+	 	WHERE a.nom = "attaque1"
+	 );
+
+	+------------+--------------+
+	| Perso      | levelAttaque |
+	+------------+--------------+
+	| headhunter |            3 |
+	+------------+--------------+
+
+88. Calculer le nombre de dégâts qie fait chaque personnage (baseDegat * (0,5 * level du personnage)).
+
+	SELECT p.nom AS "Personnage", a.nom AS "Arme", (a.degat * p.level * 0.5) AS "Degat" 
+	FROM arme a 
+	INNER JOIN personnage p ON a.idArme = p.idArmeUtilise;
+
+	+--------------+-----------------------+-------+
+	| Personnage   | Arme                  | Degat |
+	+--------------+-----------------------+-------+
+	| wawaf        | Excalibur             | 325.0 |
+	| leWar        | HachedeGlace          | 140.0 |
+	| guerrierDu09 | HacheDeFeu            | 100.0 |
+	| headhunter   | Arc des anges         | 150.0 |
+	| larcher      | Arc en bois debene    |  37.5 |
+	| lartificier  | Arbalete givrante     |  52.5 |
+	| roguiBalbao  | Dage de contrebandier |  70.0 |
+	+--------------+-----------------------+-------+
+
+
+89. Récupérer le nombre des personnages faisant moins de dégât qui 100.
+	
+	SELECT p.nom AS "Personnage", a.nom AS "Arme", (a.degat * p.level * 0.5) AS "Degat" 
+	FROM arme a 
+	INNER JOIN personnage p ON a.idArme = p.idArmeUtilise 
+	HAVING Degat < 100;
+
+	Si on tente avec un WHERE ça ne marchera pas parce qu'on est sur un calcul.
+
+	+-------------+-----------------------+-------+
+	| Personnage  | Arme                  | Degat |
+	+-------------+-----------------------+-------+
+	| larcher     | Arc en bois debene    |  37.5 |
+	| lartificier | Arbalete givrante     |  52.5 |
+	| roguiBalbao | Dage de contrebandier |  70.0 |
+	+-------------+-----------------------+-------+
+
+90. Afficher le nom de lignes présentes dans la table utilise.
+
+	SELECT COUNT(*) AS "Nombre d'attaque" FROM utilise u;
+	+------------------+
+	| Nombre d'attaque |
+	+------------------+
+	|                4 |
+	+------------------+

@@ -1,0 +1,57 @@
+udemy-h2prog-101-requetes-028.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		28. Requêtes 83 à 85
+----------------------------------------------------
+
+83. Faire la moyenne des attaques de tous les joueurs
+
+	SELECT p.nom AS "Perso", c.nom AS "Classe", AVG(a.baseDegat) AS "Moy attaques" 
+	FROM attaque a 
+	INNER JOIN utilise u ON a.idAttaque = u.idAttaque 
+	INNER JOIN personnage p ON p.idPersonnage = u.idPersonnage 
+	INNER JOIN classe c ON c.idClasse = p.idClasse 
+	GROUP BY p.nom, c.nom;
+
+	+------------+----------+--------------+
+	| Perso      | Classe   | Moy attaques |
+	+------------+----------+--------------+
+	| headhunter | Archer   |      10.0000 |
+	| leWar      | Guerrier |      50.0000 |
+	| wawaf      | Guerrier |      30.0000 |
+	+------------+----------+--------------+
+
+84. Récupérer tous les personnages, et pour chacun d'eux, récupérer toutes les attaques; et n'afficher que les lignes 3 à 5.
+
+	SELECT p.idPersonnage, p.nom AS "Perso", a.nom AS "attaque" 
+	FROM attaque a 
+	RIGHT JOIN utilise u ON a.idAttaque = u.idAttaque 
+	RIGHT JOIN personnage p ON u.idPersonnage = p.idPersonnage 
+	ORDER BY p.idPersonnage 
+	LIMIT 3 OFFSET 2;
+
+	+--------------+--------------+----------+
+	| idPersonnage | Perso        | attaque  |
+	+--------------+--------------+----------+
+	|            2 | leWar        | attaque2 |
+	|            3 | guerrierDu09 | NULL     |
+	|            4 | headhunter   | attaque1 |
+	+--------------+--------------+----------+
+
+85. Afficher toutes les attaques des personnages utilisant une arme à distance.
+
+	SELECT p.nom AS "Perso", a.nom AS "Attaque", a.baseDegat, ar.nom AS "arme" 
+	FROM attaque a 
+	INNER JOIN utilise u ON u.idAttaque = a.idAttaque 
+	INNER JOIN personnage p ON p.idPersonnage = u.idPersonnage 
+	INNER JOIN arme ar ON ar.idArme = p.idArmeUtilise
+	INNER JOIN typearme t ON t.idTypeArme = ar.idTypeArme 
+	WHERE t.estDistance = true;
+
+	+------------+----------+-----------+---------------+
+	| Perso      | Attaque  | baseDegat | arme          |
+	+------------+----------+-----------+---------------+
+	| headhunter | attaque1 |        10 | Arc des anges |
+	+------------+----------+-----------+---------------+
