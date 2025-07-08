@@ -1,0 +1,85 @@
+udemy-h2prog-101-requetes-030.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		30. Requêtes 91 à 93
+----------------------------------------------------
+
+
+91. Afficher le nombre d'attaques par personnage.
+
+	SELECT p.nom AS "Personnage", COUNT(*) AS "Nombre d'attaque" 
+	FROM personnage p 
+	INNER JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+	GROUP BY p.idPersonnage
+	ORDER BY p.nom;
+
+	+------------+------------------+
+	| Personnage | Nombre d'attaque |
+	+------------+------------------+
+	| headhunter |                1 |
+	| leWar      |                1 |
+	| wawaf      |                2 |
+	+------------+------------------+
+
+
+92. Afficher les personnages ayant le plus d'attaques.
+
+	SELECT p.nom AS "Personnage", COUNT(*) AS "Nombre d'attaque" 
+	FROM personnage p 
+	INNER JOIN utilise u ON u.idPersonnage = p.IdPersonnage 
+	GROUP BY p.idPersonnage 
+	HAVING COUNT(*) >= ALL (
+		SELECT COUNT(*) 
+		FROM personnage p 
+		INNER JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+		GROUP BY p.idPersonnage
+	);
+	+------------+------------------+
+	| Personnage | Nombre d'attaque |
+	+------------+------------------+
+	| wawaf      |                2 |
+	+------------+------------------+
+
+	Si on souhaite ernlever le nombre d'attaque il suffit d'enlever le permier count().
+
+	SELECT p.nom AS "Personnage"
+	FROM personnage p 
+	INNER JOIN utilise u ON u.idPersonnage = p.IdPersonnage 
+	GROUP BY p.idPersonnage 
+	HAVING COUNT(*) >= ALL (
+		SELECT COUNT(*) 
+		FROM personnage p 
+		INNER JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+		GROUP BY p.idPersonnage
+	);
+
+	+------------+
+	| Personnage |
+	+------------+
+	| wawaf      |
+	+------------+
+
+
+93. Afficher el (les) personnage(s) ayant le moins d'attaques.
+
+	SELECT p.nom AS "Personnage", COUNT(u.levelAttaque) AS "NB attaque" 
+	FROM personnage p 
+	LEFT JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+	GROUP BY p.idPersonnage 
+	HAVING COUNT(u.levelAttaque) <= ALL (
+		SELECT COUNT(u.levelAttaque) 
+		FROM personnage p 
+		LEFT JOIN utilise u ON u.idPersonnage = p.idPersonnage 
+		GROUP BY p.idPersonnage
+	);
+
+	+--------------+------------+
+	| Personnage   | NB attaque |
+	+--------------+------------+
+	| guerrierDu09 |          0 |
+	| larcher      |          0 |
+	| lartificier  |          0 |
+	| roguiBalbao  |          0 |
+	+--------------+------------+

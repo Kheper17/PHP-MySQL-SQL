@@ -1,0 +1,51 @@
+udemy-h2prog-101-requetes-031.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		31. Requêtes 94 à 96
+----------------------------------------------------
+
+
+94. Afficher les personnages nés avant 2003.
+
+	SELECT * FROM personnage WHERE YEAR(dateNaissance) < 2003;
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	| idPersonnage | nom          | surnom      | level | idArmeUtilise | idClasse | dateNaissance |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+	|            1 | wawaf        | BestWarrior |    10 |             7 |        1 | 2000-01-01    |
+	|            2 | leWar        | ptitWar     |     8 |             3 |        1 | 2001-02-01    |
+	|            3 | guerrierDu09 | baba        |    10 |             2 |        1 | 2002-03-01    |
+	|            5 | larcher      | NULL        |     5 |             5 |        2 | 2001-04-01    |
+	+--------------+--------------+-------------+-------+---------------+----------+---------------+
+
+95. Ajouter les 3 attaques suivantes :	
+		- coup de pied  : 20 dégâts
+		- coup de poing : 15 dégâts
+		- balayette     : 20 dégâts
+
+	INSERT INTO `attaque` (`nom`,`baseDegat`) VALUES ("Coup de pied", '20'), ("Coup de poing", '15'), ("Balayette", '5');
+
+	SELECT * FROM attaque;
+	+-----------+---------------+-----------+
+	| idAttaque | nom           | baseDegat |
+	+-----------+---------------+-----------+
+	|         1 | attaque1      |        10 |
+	|         2 | attaque2      |        50 |
+	|         3 | attaque3      |        50 |
+	|         5 | Coup de pied  |        20 |<--
+	|         6 | Coup de poing |        15 |<--
+	|         7 | Balayette     |         5 |<--
+	+-----------+---------------+-----------+
+
+96. Récupérer les attaques ne commançant pas par "Coup".
+
+	SELECT * FROM attaque WHERE nom NOT LIKE "Coup%";
+	+-----------+---------------+-----------+
+	| idAttaque | nom           | baseDegat |
+	+-----------+---------------+-----------+
+	|         1 | attaque1      |        10 |
+	|         2 | attaque2      |        50 |
+	|         3 | attaque3      |        50 |
+	|         7 | Balayette     |         5 |
+	+-----------+---------------+-----------+

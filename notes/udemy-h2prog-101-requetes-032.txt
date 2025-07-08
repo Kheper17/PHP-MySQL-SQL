@@ -1,0 +1,57 @@
+udemy-h2prog-101-requetes-032.txt
+UDEMY – H2prog – Mathieu GASTON
+----------------------------------------------------
+101 requêtes pour maîtriser SQL en moins de 3 heures
+	Section 12 S'entrainer en 20 requêtes
+		32. Requêtes 97 à 101
+----------------------------------------------------
+
+
+97. Modifier les attaque ne commençant pas par "Coup" pour leur rajouter 20 points de dégâts.
+
+	UPDATE attaque SET baseDegat = baseDegat + 20 WHERE nom LIKE "Coup%";
+
+	SELECT * FROM attaque;
+	+-----------+---------------+-----------+
+	| idAttaque | nom           | baseDegat |
+	+-----------+---------------+-----------+
+	|         1 | attaque1      |        10 |
+	|         2 | attaque2      |        50 |
+	|         3 | attaque3      |        50 |
+	|         5 | Coup de pied  |        40 |
+	|         6 | Coup de poing |        35 |
+	|         7 | Balayette     |         5 |
+	+-----------+---------------+-----------+
+
+
+98. Supprimer les attaques 1, 2 et 3.
+
+	 DELETE FROM attaque WHERE nom LIKE "attaque%";
+
+	 SELECT * FROM attaque;
+	+-----------+---------------+-----------+
+	| idAttaque | nom           | baseDegat |
+	+-----------+---------------+-----------+
+	|         5 | Coup de pied  |        40 |
+	|         6 | Coup de poing |        35 |
+	|         7 | Balayette     |         5 |
+	+-----------+---------------+-----------+
+
+
+99. 100. 101. 3 requêtes pour supprimer les personnages nés avant 2003
+
+	DELETE FROM personnage WHERE YEAR(dateNaissance) < 2003;
+	
+	ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`rpg`.`dispose`, CONSTRAINT `FK_PERSONNAGE` FOREIGN KEY (`idPersonnage`) REFERENCES `personnage` (`idPersonnage`))
+
+	ça marche pas à cause ON CASCADE DELETE. Il faut supprimer FK_PERSONNAGE sur dispose
+
+	ALTER TABLE dispose DROP FOREIGN KEY FK_PERSONNAGE
+
+	Puis il faut rajouter la conttrainte :
+
+	ALTER TABLE dispose 
+	ADD CONSTRAINT FK_PERSONNAGE 
+	FOREIGN KEY (idPersonnage) REFERENCES Personnage(idPersonnage) ON DELETE CASCADE
+
+	DELETE FROM personnage WHERE YEAR(dateNaissance) < 2003;
