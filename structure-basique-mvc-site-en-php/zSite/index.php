@@ -16,10 +16,14 @@ try {
     }
 
     switch($page){
-        case "accueil" : $mainController->accueil();break;
-        case "page1" : $mainController->page1();    break;
-        case "page2" : $mainController->page2();    break;
-        case "page3" : $mainController->page3();    break;
+        case "accueil" : $mainController->accueil();
+        break;
+        case "compte" : 
+            switch($url[1]){
+                case "profil": $mainController->accueil();
+                break;
+            }
+        break;
         default : throw new Exception("La page n'existe pas");
     }
 } catch (Exception $e){
